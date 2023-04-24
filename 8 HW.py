@@ -15,7 +15,12 @@ def get_birthdays_per_week(users):
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     for i in range(7):
         date = today + timedelta(days=i)
-        print(weekdays[i] + ": ", end="")
+        if date.weekday() in [5, 6]:
+            monday = today + timedelta(days=7-date.weekday())
+            print(weekdays[0] + ": ", end="")
+        else:
+            print(weekdays[i] + ": ", end="")
+            monday = None
         birthday_people = []
         for user in users:
             if user['birthday'].weekday() == date.weekday():
@@ -23,6 +28,9 @@ def get_birthdays_per_week(users):
         if len(birthday_people) == 0:
             print("No birthdays")
         else:
-            print(", ".join(birthday_people))
+            if monday is not None and len(birthday_people) > 0:
+                print(", ".join(birthday_people) + " (also, " + ", ".join([user['name'] for user in users if user['birthday'].weekday() in [5, 6] and user['birthday'].strftime('%A') == weekdays[0]]) + " on " + weekdays[0] + ")")
+            else:
+                print(", ".join(birthday_people))
 
 get_birthdays_per_week(users)
